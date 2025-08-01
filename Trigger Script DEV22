@@ -1,4 +1,4 @@
- #!/bin/bash
+#!/bin/bash
 
 JENKINS_URL="https://dev-deployments.csnonprod.com"
 TOKEN="xRPyRrQCDYxZdrYxcOAhxsyFG"
@@ -6,16 +6,26 @@ USERNAME="remoteuser"
 PASSWORD="111ffb3b647ea5d22a81fd9897b25cd151"
 
 #UI_Parameters
-RELEASE="GCPStage"
+RELEASE="dev22"
 BRANCH="qa-automation-refactoring-v2.0.0"
-Env="gcpStag"
-SLACKID="C06A31VD1UK"
+Env="dev22"
+SLACKID="C08U47WQVR9"
+
+#OrgAdmin
+ORGADMIN_RELEASE="default-OrgAdminSanity"
+ORGADMIN_BRANCH="OrgAdminSanityReports"
+ORGADMIN_ENV="Dev22"
+ORGADMIN_XML="OrgAdminSanity"
+
 
 #API_Parameters
-CDA_ENV="GcpStag"
-SEARCH_ENV="GcpStag"
-SEARCH_OPTION="SEARCH_AZURE_GCP_SANITY"
-SEARCHVARIANT_ENV="GcpStag"
+CDA_ENV="Dev22"
+CDA_OPTION="CDA_FULL_SANITY"
+CMA_ENV="Dev22"
+CMA_OPTION="CMA_BASIC_SANITY"
+SEARCH_ENV="Dev22"
+SEARCH_OPTION="SEARCH_FULL_SANITY"
+SEARCHVARIANT_ENV="Dev22"
 SEARCHVARIANT_OPTION="SEARCH_VARIANTS_SANITY"
 
 # Credentials
@@ -23,22 +33,23 @@ CREDS=c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx
 #CREDS=cHJhbmF2OlByYXBAMTk5NQ==
 
 #GoCDPipelines
-RTE_PIPELINE="gcp-na-stag-rte-full-e2e-sanity"
-CLI_COMBAINED_PIPELINE=cli-gcp-staging-sanity
-GRAPHQL_PREVIEW_PIPELINE=graphql-preview-api-gcp-na-stag-deploy
-RESTPREVIEW_PIPELINE=rest-preview-api-gcp-na-stag-deploy
-TIMELINEPREVIEW_PIPELINE=gcp-na-stag-preview-ui-deploy
-LIVE_PREVIEW=gcp-stag-livepreview-full-sanity
-VISUALBUILDER_PIPELINE=gcp-na-stag-visual-builder-ui-deploy
-AIASSISTANT_PIPELINE=gcp-nastage-ai-assistant-e2e-sanity
-BRANDKIT_PIPELINE=gcp-nastage-brand-kit-e2e-sanity
-AUTH_PIPELINE=auth-background-jobs-service-gcp-na-stag-deploy
-WEBHOOKS_PIPELINE=stag-GCP-webhooks-sanity
-ARGUS_PIPELINE=stag-GCP-ARGUS-basic-sanity
-LAUNCH_PIPELINE=contentfly-deployment-agent-gcp-stag-deploy
-DEVELOPERHUB_PIPELINE=developerhub-ui-gcp-stag-deploy
-AUTOMATION_PIPELINE=gcp-stage-automations-ui-deploy
-PERSONALIZATION_PIPELINE=personalization-service-gcp-stag-deploy
+RTE_PIPELINE="dev22-rte-full-e2e-sanity"
+# CLI_COMBAINED_PIPELINE="cli-GCP-NA-production-sanity"
+GRAPHQL_PREVIEW_PIPELINE="graphql-preview-api-dev22-sanity"
+RESTPREVIEW_PIPELINE="rest-preview-api-dev22-sanity"
+TIMELINEPREVIEW_PIPELINE="preview-ui-dev22-sanity"
+LIVE_PREVIEW="dev22-livepreview-full-sanity"
+VISUALBUILDER_PIPELINE="dev22-visual-builder-sanity"
+AIASSISTANT_PIPELINE="dev22-ai-assistant-e2e-sanity"
+BRANDKIT_PIPELINE="dev22-brand-kit-e2e-sanity"
+AUTH_PIPELINE="dev22-auth-sanity"
+WEBHOOKS_PIPELINE="dev22-webhooks-sanity"
+ARGUS_PIPELINE="dev22-ARGUS-basic-sanity"
+GLOBALDASHBOARD_PIPELINE="dev22-globalDashboard-sanity"
+LAUNCH_PIPELINE="contentfly-management-service-dev22-deploy"
+DEVELOPERHUB_PIPELINE="marketplace-ui-dev22-deploy"
+AUTOMATION_PIPELINE="dev22-automations-ui-deploy"
+PERSONALIZATION_PIPELINE="personalization-ui-dev22-deploy"
 
 
 #Triggering RTE Basic Sanity - UI
@@ -52,13 +63,26 @@ curl -X POST "$JENKINS_URL/job/cs-qa-Search-FullSanity-Runner/buildWithParameter
 echo "Triggerd Search Variants Sanity - API Successfullly"
 
 
+#Triggering OrgAdmin Sanity - UI
+curl -X POST "$JENKINS_URL/job/cs-qa-OrgAdminSanity/buildWithParameters?token=$TOKEN&release=$ORGADMIN_RELEASE&branch=$ORGADMIN_BRANCH&environment=$ORGADMIN_ENV&xml=$ORGADMIN_XML" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+echo "triggered OrgAdmin Sanity - UI successfully"
+
+
+# Triggering 1CT Sanity - UI
+curl -X POST "$JENKINS_URL/job/cs-qa-OneClickTrial/buildWithParameters?token=$TOKEN&release=default-release&tag=OneClickTrialVenus&env=dev22" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+echo "triggered OneClickTrial Sanity - UI successfully"
+
+
+
 # Triggering Assets Full Sanity - UI
 curl -X POST "$JENKINS_URL/job/QA-Venus-UI-Assets/buildWithParameters?token=$TOKEN&release=$RELEASE&tag=$BRANCH&SlackChannelID=$SLACKID&env=$Env" \
      --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
 echo "triggered Assets Full Sanity - UI successfully"
 
 
-# Triggering Full Sanity - UI
+# Triggering Full Sanity - UI 
 curl -X POST "$JENKINS_URL/job/QA-Venus-UI/buildWithParameters?token=$TOKEN&release=$RELEASE&tag=$BRANCH&SlackChannelID=$SLACKID&env=$Env" \
      --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
 echo "triggered Full Sanity - UI successfully"
@@ -99,44 +123,17 @@ echo "CLI COMBAINED - Sanity triggered successfully"
 
 
 #Triggering Rest Preview - Sanity
-# echo "Getting the latest instance counter for $RESTPREVIEW_PIPELINE"
-instance_counter_restpreview=$(curl --silent --location "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$RESTPREVIEW_PIPELINE/history?page_size=10" \
---header "Authorization: Basic $CREDS" \
---header "X-GoCD-Confirm: true" \
---header "Accept: application/vnd.go.cd.v1+json" | jq -r '.pipelines[0].counter')
-# echo "Latest instance: $instance_counter_restpreview"
-curl --location --request POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/stages/$RESTPREVIEW_PIPELINE/$instance_counter_restpreview/sanity/run" \
---header "Authorization: Basic $CREDS" \
---header "X-GoCD-Confirm: true" \
---header "Accept: application/vnd.go.cd.v2+json"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$RESTPREVIEW_PIPELINE/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H "Authorization: Basic $CREDS" -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
 echo "Rest Preview - Sanity triggered successfully"
 
 
 #Triggering GraphQL Preview - Sanity
-# echo "Getting the latest instance counter for $GRAPHQL_PREVIEW_PIPELINE"
-instance_counter_graphqlpreview=$(curl --silent --location "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$GRAPHQL_PREVIEW_PIPELINE/history?page_size=10" \
---header "Authorization: Basic $CREDS" \
---header "X-GoCD-Confirm: true" \
---header "Accept: application/vnd.go.cd.v1+json" | jq -r '.pipelines[0].counter')
-# echo "Latest instance: $instance_counter_graphqlpreview"
-curl --location --request POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/stages/$GRAPHQL_PREVIEW_PIPELINE/$instance_counter_graphqlpreview/sanity/run" \
---header "Authorization: Basic $CREDS" \
---header "X-GoCD-Confirm: true" \
---header "Accept: application/vnd.go.cd.v2+json"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$GRAPHQL_PREVIEW_PIPELINE/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H "Authorization: Basic $CREDS" -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
 echo "GraphQL Preview - Sanity triggered successfully"
 
 
 #Triggering Timeline Preview - Sanity
-# echo "Getting the latest instance counter for $TIMELINEPREVIEW_PIPELINE"
-instance_counter_timelinepreview=$(curl --silent --location "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$TIMELINEPREVIEW_PIPELINE/history?page_size=10" \
---header "Authorization: Basic $CREDS" \
---header "X-GoCD-Confirm: true" \
---header "Accept: application/vnd.go.cd.v1+json" | jq -r '.pipelines[0].counter')
-# echo "Latest instance: $instance_counter_timelinepreview"
-curl --location --request POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/stages/$TIMELINEPREVIEW_PIPELINE/$instance_counter_timelinepreview/sanity/run" \
---header "Authorization: Basic $CREDS" \
---header "X-GoCD-Confirm: true" \
---header "Accept: application/vnd.go.cd.v2+json"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$TIMELINEPREVIEW_PIPELINE/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H "Authorization: Basic $CREDS" -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
 echo "Timeline Preview - Sanity triggered successfully"
 
 
@@ -146,44 +143,30 @@ echo "Live Preview - Sanity triggered successfully "
 
 
 #Triggering VisualBuilder - Sanity
-#echo "Getting the latest instance counter for $VISUALBUILDER_PIPELINE"
-instance_counter_vb=$(curl --silent --location "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$VISUALBUILDER_PIPELINE/history?page_size=10" \
---header "Authorization: Basic $CREDS" \
---header "X-GoCD-Confirm: true" \
---header "Accept: application/vnd.go.cd.v1+json" | jq -r '.pipelines[0].counter')
-#echo "Latest instance: $instance_counter_vb"
-curl --location --request POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/stages/$VISUALBUILDER_PIPELINE/$instance_counter_vb/sanity/run" \
---header "Authorization: Basic $CREDS" \
---header "X-GoCD-Confirm: true" \
---header "Accept: application/vnd.go.cd.v2+json"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$VISUALBUILDER_PIPELINE/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H "Authorization: Basic $CREDS" -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
 echo "VisualBuilder - Sanity triggered successfully"
 
 
 #Triggering Auth - Sanity
-#echo "Getting the latest instance counter for $AUTH_PIPELINE"
-instance_counter_auth=$(curl --silent --location "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$AUTH_PIPELINE/history?page_size=10" \
---header "Authorization: Basic $CREDS" \
---header "X-GoCD-Confirm: true" \
---header "Accept: application/vnd.go.cd.v1+json" | jq -r '.pipelines[0].counter')
-#echo "Latest instance: $instance_counter_auth"
-curl --location --request POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/stages/$AUTH_PIPELINE/$instance_counter_auth/sanity/run" \
---header "Authorization: Basic $CREDS" \
---header "X-GoCD-Confirm: true" \
---header "Accept: application/vnd.go.cd.v2+json"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$AUTH_PIPELINE/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H "Authorization: Basic $CREDS" -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
 echo "Auth - Sanity triggered successfully"
 
-
-# Triggering WEBHOOKS - Sanity
+#Triggering Webhooks - Sanity
 curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$WEBHOOKS_PIPELINE/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H "Authorization: Basic $CREDS" -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
 echo "Webhooks - Sanity triggered successfully"
 
-
-# Triggering Argus - Sanity
+#Triggering Argus - Sanity
 curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$ARGUS_PIPELINE/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H "Authorization: Basic $CREDS" -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
 echo "Argus - Sanity triggered successfully"
 
-#Triggering Contentfly - GCP Stage - Sanity
-echo "Getting the latest instance counter for $LAUNCH_PIPELINE"
+#Triggering Global Dashboard - Sanity
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$GLOBALDASHBOARD_PIPELINE/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H "Authorization: Basic $CREDS" -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+echo "Global Dashboard - Sanity triggered successfully"
+
+
+
+#Triggering Contentfly - GCP NA - Sanity
+#echo "Getting the latest instance counter for $LAUNCH_PIPELINE"
 instance_counter_launch=$(curl --silent --location "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$LAUNCH_PIPELINE/history?page_size=10" \
 --header "Authorization: Basic $CREDS" \
 --header "X-GoCD-Confirm: true" \
@@ -196,8 +179,8 @@ curl --location --request POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/ap
 echo "Contentfly - Sanity triggered successfully"
 
 
-#Triggering GCP Stag - Developer Hub - Sanity
-echo "Getting the latest instance counter for $DEVELOPERHUB_PIPELINE"
+#Triggering GCP NA - Developer Hub - Sanity
+#echo "Getting the latest instance counter for $DEVELOPERHUB_PIPELINE"
 instance_counter_DeveloperHub=$(curl --silent --location "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$DEVELOPERHUB_PIPELINE/history?page_size=10" \
 --header "Authorization: Basic $CREDS" \
 --header "X-GoCD-Confirm: true" \
@@ -207,11 +190,11 @@ curl --location --request POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/ap
 --header "Authorization: Basic $CREDS" \
 --header "X-GoCD-Confirm: true" \
 --header "Accept: application/vnd.go.cd.v2+json"
-echo "Developer Hub - Sanity triggered successfully"
+echo "Marketplace - Sanity triggered successfully"
 
 
-#Triggering Automations - GCP Stage - Sanity
- echo "Getting the latest instance counter for $AUTOMATION_PIPELINE"
+#Triggering Automations - GCP NA - Sanity
+# echo "Getting the latest instance counter for $AUTOMATION_PIPELINE"
 instance_counter_automate=$(curl --silent --location "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$AUTOMATION_PIPELINE/history?page_size=10" \
 --header "Authorization: Basic $CREDS" \
 --header "X-GoCD-Confirm: true" \
@@ -225,14 +208,14 @@ echo "Automate - Sanity triggered successfully"
 
 
 
-#Triggering GCP Stag - Personalization Service - Sanity
-#echo "Getting the latest instance counter for $PERSONALIZATION_PIPELINE"
+#Triggering GCP NA - Personalization Service - Sanity
+# echo "Getting the latest instance counter for $PERSONALIZATION_PIPELINE"
 instance_counter_Personalisation=$(curl --silent --location "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/$PERSONALIZATION_PIPELINE/history?page_size=10" \
 --header "Authorization: Basic $CREDS" \
 --header "X-GoCD-Confirm: true" \
 --header "Accept: application/vnd.go.cd.v1+json" | jq -r '.pipelines[0].counter')
 # echo "Latest instance: $instance_counter_Personalisation"
-curl --location --request POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/stages/$PERSONALIZATION_PIPELINE/$instance_counter_Personalisation/stag-sanity/run" \
+curl --location --request POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/stages/$PERSONALIZATION_PIPELINE/$instance_counter_Personalisation/sanity/run" \
 --header "Authorization: Basic $CREDS" \
 --header "X-GoCD-Confirm: true" \
 --header "Accept: application/vnd.go.cd.v2+json"
@@ -301,9 +284,9 @@ echo "Brand Kit - Sanity triggered successfully"
 
 
 #Triggering CDA Basic Sanity - API
-curl -X POST "$JENKINS_URL/job/cs-qa-CDA-BasicSanity-Runner/buildWithParameters?token=$TOKEN&Environment=$CDA_ENV&Option=CDA_BASIC_SANITY&Retry_Failed_Sanity=false&Fetch_Report_Only=false" \
+curl -X POST "$JENKINS_URL/job/cs-qa-CDA-FullSanity-Runner/buildWithParameters?token=$TOKEN&Environment=$CDA_ENV&Option=$CDA_OPTION&Retry_Failed_Sanity=false&Fetch_Report_Only=false" \
      --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
-echo "Triggerd CDA Basic Sanity - API Successfullly"
+echo "Triggerd CDA Basic Sanity - API Successfully"
 
 
 #Triggering Search Full Sanity - API
@@ -312,4 +295,10 @@ curl -X POST "$JENKINS_URL/job/cs-qa-Search-FullSanity-Runner/buildWithParameter
 echo "Triggerd Search Full Sanity - API Successfullly"
 
 
-echo "All sanities have been triggered"
+#Triggering CMA Sanity - API
+curl -X POST "$JENKINS_URL/job/Runscope-cma-Sanity-Runners/buildWithParameters?token=$TOKEN&Environment=$CMA_ENV&Option=$CMA_OPTION&Retry_Failed_Sanity=false&Fetch_Report_Only=false" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+echo "Triggerd CMA Basic Sanity - API Successfullly"
+
+
+# echo "All sanities have been triggered"

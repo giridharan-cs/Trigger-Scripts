@@ -1,0 +1,200 @@
+#!/bin/bash
+
+JENKINS_URL="https://dev-deployments.csnonprod.com"
+TOKEN="xRPyRrQCDYxZdrYxcOAhxsyFG"
+USERNAME="remoteuser"
+PASSWORD="111ffb3b647ea5d22a81fd9897b25cd151"
+
+#Triggering RTE Basic Sanity - UI
+echo "Triggering RTE Basic Sanity - UI"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/dev11-rte-e2e-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+#Triggering Full Sanity - UI
+echo "Triggering Full Sanity - UI"
+#curl -X POST "$JENKINS_URL/job/QA-Venus-UI/buildWithParameters?token=$TOKEN&release=prod&tag=qa-automation-refactoring-v2.0.0&SlackChannelID=C07SUNJ3ZEV&env=dev11" \
+curl -X POST "$JENKINS_URL/job/QA-Venus-UI/buildWithParameters?token=$TOKEN&release=prod&tag=qa-automation-refactoring-v2.0.0&SlackChannelID=C07SUNJ3ZEV&env=dev11" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+
+#Triggering Assets Full Sanity - UI
+echo "Triggering Assets Full Sanity - UI"
+curl -X POST "$JENKINS_URL/job/QA-Venus-UI-Assets/buildWithParameters?token=$TOKEN&release=prod&tag=qa-automation-refactoring-v2.0.0&SlackChannelID=C07SUNJ3ZEV&env=dev11" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+
+#Triggering Search Full Sanity - UI
+echo "Triggering Search Full Sanity - UI"
+curl -X POST "$JENKINS_URL/job/QA-Venus-UI-Search/buildWithParameters?token=$TOKEN&release=prod&tag=qa-automation-refactoring-v2.0.0&SlackChannelID=C07SUNJ3ZEV&env=dev11" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+
+#Triggering Taxonomy Full Sanity - UI
+echo "Triggering Taxonomy Full Sanity - UI"
+curl -X POST "$JENKINS_URL/job/QA-Venus-UI-Taxonomy/buildWithParameters?token=$TOKEN&release=prod&tag=qa-automation-refactoring-v2.0.0&SlackChannelID=C07SUNJ3ZEV&env=dev11" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+
+#Triggering Variants Full Sanity - UI
+echo "Triggering Variants Full Sanity - UI"
+curl -X POST "$JENKINS_URL/job/QA-Venus-UI-Variants/buildWithParameters?token=$TOKEN&release=prod&tag=qa-automation-refactoring-v2.0.0&SlackChannelID=C07SUNJ3ZEV&env=dev11" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+#Triggering Extensions Full Sanity - UI
+echo "Triggering Extensions Full Sanity - UI"
+curl -X POST "$JENKINS_URL/job/QA-Venus-UI-Extensions/buildWithParameters?token=$TOKEN&release=prod&tag=qa-automation-refactoring-v2.0.0&SlackChannelID=C07SUNJ3ZEV&env=dev11" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+
+#Triggering Releases20 Full Sanity - UI
+curl -X POST "$JENKINS_URL/job/QA-Venus-UI-Releases20/buildWithParameters?token=$TOKEN&release=prod&tag=qa-automation-refactoring-v2.0.0&SlackChannelID=C07SUNJ3ZEV&env=dev11" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+
+sleep 600
+#Triggering CMA API Full sanity (Automation-api)
+echo "Triggering CMA API Full sanity (Automation-api)"
+curl -X POST "$JENKINS_URL/job/QA-PipelineIcanioTeam-automation-api/buildWithParameters?token=$TOKEN&release=prod&tag=main&SlackChannelID=C07SUNJ3ZEV&env=dev11" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+#Triggering API Bulk Delete sanity
+echo "Triggering API Bulk Delete sanity"
+curl -X POST "$JENKINS_URL/job/QA-Automation-API-BulkDelete/buildWithParameters?token=$TOKEN&release=prod&tag=main&SlackChannelID=C07SUNJ3ZEV&env=dev11" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+#Triggering CMA Basic Sanity - API
+echo "Triggering CMA Basic Sanity - API"
+curl -X POST "$JENKINS_URL/job/Runscope-cma-Sanity-Runners/buildWithParameters?token=$TOKEN&Environment=Dev11&Option=NESTED_GLOBAL_FIELDS_SANITY&Retry_Failed_Sanity=false&Fetch_Report_Only=false" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+sleep 120
+# Triggering Live Preview Sanity - UI
+echo "Triggering Live Preview Sanity - UI"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/dev11-livepreview-full-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+sleep 120
+#Triggering OrgAdminSanity - UI
+echo "Triggering OrgAdminSanity - UI"
+curl -X POST "$JENKINS_URL/job/cs-qa-OrgAdminSanity/buildWithParameters?token=$TOKEN&release=default-OrgAdminSanity&branch=OrgAdminSanityReports&environment=Dev11&xml=OrgAdminSanity" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+
+sleep 60
+#Triggering CMA Basic Sanity - API
+echo "Triggering CMA Basic Sanity - API"
+curl -X POST "$JENKINS_URL/job/Runscope-cma-Sanity-Runners/buildWithParameters?token=$TOKEN&Environment=Dev11&Option=CMA_BASIC_SANITY&Retry_Failed_Sanity=false&Fetch_Report_Only=false" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+
+sleep 120
+#Triggering CDA Basic Sanity - API
+echo "Triggering CDA Basic Sanity - API"
+curl -X POST "$JENKINS_URL/job/cs-qa-CDA-BasicSanity-Runner/buildWithParameters?token=$TOKEN&Environment=Dev11&Option=CDA_BASIC_SANITY_COMBINED&Retry_Failed_Sanity=true&Fetch_Report_Only=false" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+sleep 120
+#Triggering Search Full Sanity - API
+echo "Triggering Search Full Sanity - API"
+curl -X POST "$JENKINS_URL/job/cs-qa-Search-FullSanity-Runner/buildWithParameters?token=$TOKEN&Environment=Dev11&Option=SEARCH_FULL_SANITY&Retry_Failed_Sanity=true&Fetch_Report_Only=false" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+
+#sleep 60
+# Triggering CLI-Launch Sanity
+#echo "Triggering CLI-Launch Sanity"
+#curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/cli-launch-daily-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+
+# Triggering Visual Builder E2E - UI
+echo "Triggering Visual Builder E2E - UI"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/dev11-visual-builder-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+sleep 120
+# Triggering CSI AI Assistant - E2E
+echo "Triggering CSI AI Assistant - E2E"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/dev11-ai-assistant-e2e-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+sleep 180
+# Triggering Webhook Test Suite - UI
+echo "Triggering Webhook Test Suite - UI"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/dev11-webhooks-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+
+# Triggering CLI-CMS Sanity
+echo "Triggering CLI-CMS Sanity"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/cli-cms-daily-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+sleep 120
+# Triggering CLI-Marketplace Sanity
+echo "Triggering CLI-Marketplace Sanity"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/cli-marketplace-daily-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true'> /dev/null 2>&1 &
+
+sleep 300
+#Triggering Search Variants Sanity - API
+echo "Triggering Search Variants Sanity - API"
+curl -X POST "$JENKINS_URL/job/cs-qa-Search-FullSanity-Runner/buildWithParameters?token=$TOKEN&Environment=Dev11&Option=SEARCH_VARIANTS_SANITY&Retry_Failed_Sanity=true&Fetch_Report_Only=false" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+# Triggering Graphql Preview Service - API
+echo "Triggering Graphql Preview Service - API"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/graphql-preview-api-dev11-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+
+sleep 120
+#Triggering Variants Sanity - API
+echo "Triggering Variants Sanity - API"
+curl -X POST "$JENKINS_URL/job/Runscope-cma-Sanity-Runners/buildWithParameters?token=$TOKEN&Environment=Dev11&Option=CMA_VARIANT_SANITY&Retry_Failed_Sanity=false&Fetch_Report_Only=false" \
+     --user "$USERNAME:$PASSWORD" > /dev/null 2>&1 &
+
+
+# Triggering CLI-Personalize Sanity
+echo "Triggering CLI-Personalize Sanity"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/cli-personalize-daily-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+
+sleep 120
+# Triggering Timeline Preview Sanity - UI
+echo "Triggering Timeline Preview Sanity - UI"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/preview-ui-dev11-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+
+# Triggering CSI Brand Kit - E2E
+echo "Triggering CSI Brand Kit - E2E"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/dev11-brand-kit-e2e-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+# Triggering REST Preview Service - API
+echo "Triggering REST Preview Service - API"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/rest-preview-api-dev11-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+# Triggering Argus Basic Sanity - UI
+echo "Triggering Argus Basic Sanity - UI"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/dev11-ARGUS-basic-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+# Triggering SDK-CDA Sanity
+echo "Triggering SDK-CDA Sanity"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/sdk-js-cda-daily-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+# Triggering SDK-CMA Sanity
+echo "Triggering SDK-CMA Sanity"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/sdk-js-cma-daily-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+# Triggering SDK-JS Marketplace Delivery Sanity
+echo "Triggering SDK JS Marketplace Delivery Sanity"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/sdk-js-marketplace-daily-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+#Triggering SDK-Typescript-CDA
+echo "Triggering SDK Typescript CDA Sanity"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/sdk-ts-cda-daily-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+#Triggering Auth sanity
+echo "Triggering Auth Sanity"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/dev11-auth-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+#Triggering Dotnet CDA SDK Sanity
+echo "Triggering Dotnet CDA SDK Sanity"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/sdk-dotnet-cda-daily-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+#Triggering Java CDA SDK Sanity
+echo "Triggering Java CDA SDK Sanity"
+curl -X POST "https://gocd-yxq6yfhia1nz.contentstack.com/go/api/pipelines/sdk-java-cda-daily-sanity/schedule" -H 'Accept: application/vnd.go.cd.v1+json' -H 'Content-Type: application/json' -H 'Authorization: Basic c2FuaXR5X3VzZXI6djJoM2x4VjcwRENsMDFQTHJWbG9id2Mx' -H 'X-GoCD-Confirm: true' > /dev/null 2>&1 &
+
+echo "All sanities have been triggered"
